@@ -30,19 +30,59 @@ const formatShortDate = (dateStr: string): string => {
   });
 };
 
+// Helper to write text with bold names inline
+const writeTextWithBoldNames = (
+  pdf: jsPDF,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  tenantName: string,
+  sublessorName: string
+): number => {
+  pdf.setFontSize(9);
+  const lines = pdf.splitTextToSize(text, maxWidth);
+  
+  for (const line of lines) {
+    let currentX = x;
+    const words = line.split(' ');
+    
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+      const isLastWord = i === words.length - 1;
+      
+      // Check if word contains tenant or sublessor name parts
+      const isTenantName = tenantName.split(' ').some(part => word.includes(part) && part.length > 2);
+      const isSublessorName = sublessorName.split(' ').some(part => word.includes(part) && part.length > 2);
+      
+      if (isTenantName || isSublessorName) {
+        pdf.setFont('helvetica', 'bold');
+      } else {
+        pdf.setFont('helvetica', 'normal');
+      }
+      
+      pdf.text(word + (isLastWord ? '' : ' '), currentX, y);
+      currentX += pdf.getTextWidth(word + ' ');
+    }
+    y += 3.5;
+  }
+  
+  pdf.setFont('helvetica', 'normal');
+  return y;
+};
+
 export const generateAgreementPdf = async (
   data: AgreementData,
   includeLetterhead: boolean
 ): Promise<void> => {
   const pdf = new jsPDF('p', 'mm', 'letter');
   const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 25;
+  const margin = 20;
   const contentWidth = pageWidth - margin * 2;
   let yPos = margin;
 
   // Add letterhead if requested
   if (includeLetterhead) {
-    // Load and add the letterhead image
     const img = new Image();
     img.src = hiveLetterhead;
     
@@ -50,46 +90,77 @@ export const generateAgreementPdf = async (
       img.onload = resolve;
     });
     
-    // Add letterhead image (width: 160mm, height proportional)
-    const imgWidth = 160;
+    const imgWidth = 150;
     const imgHeight = (img.height / img.width) * imgWidth;
     pdf.addImage(img, 'PNG', margin, yPos, imgWidth, imgHeight);
-    yPos += imgHeight + 5;
+    yPos += imgHeight + 3;
     
-    // Add yellow divider line
+    // Yellow divider line
     pdf.setDrawColor(255, 204, 0);
-    pdf.setLineWidth(1);
+    pdf.setLineWidth(0.8);
     pdf.line(margin, yPos, pageWidth - margin, yPos);
-    yPos += 10;
+    yPos += 6;
   }
 
   // Title
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(18);
-  const title = includeLetterhead ? 'Agreement' : 'Rental Agreement';
-  pdf.text(title, pageWidth / 2, yPos, { align: 'center' });
-  yPos += 12;
+  pdf.setFontSize(14);
+  pdf.text('Agreement', pageWidth / 2, yPos, { align: 'center' });
+  yPos += 8;
 
-  // Introduction paragraph
-  pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(11);
-  const introParagraph = `This agreement is made between ${data.tenantName} and ${data.sublessorName} for the period beginning ${formatDate(data.leaseStartDate)}, and ending ${formatDate(data.leaseEndDate)}, and will convert to a month-to-month at ${data.propertyAddress}.`;
+  // Introduction paragraph with bold names
+  pdf.setFontSize(9);
+  const introStart = `This agreement is made between `;
+  const introMid = ` and `;
+  const introEnd = ` for the period beginning ${formatDate(data.leaseStartDate)}, and ending ${formatDate(data.leaseEndDate)}, and will convert to a month-to-month at ${data.propertyAddress}.`;
   
-  const introLines = pdf.splitTextToSize(introParagraph, contentWidth);
-  pdf.text(introLines, margin, yPos);
-  yPos += introLines.length * 5 + 8;
+  let currentX = margin;
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(introStart, currentX, yPos);
+  currentX += pdf.getTextWidth(introStart);
+  
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(data.tenantName, currentX, yPos);
+  currentX += pdf.getTextWidth(data.tenantName);
+  
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(introMid, currentX, yPos);
+  currentX += pdf.getTextWidth(introMid);
+  
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(data.sublessorName, currentX, yPos);
+  currentX += pdf.getTextWidth(data.sublessorName);
+  
+  pdf.setFont('helvetica', 'normal');
+  const remainingIntro = pdf.splitTextToSize(introEnd, contentWidth);
+  
+  // First line continues
+  const firstLineRemaining = introEnd.substring(0, introEnd.length);
+  const introLines = pdf.splitTextToSize(firstLineRemaining, pageWidth - currentX - margin);
+  if (introLines.length > 0) {
+    pdf.text(introLines[0], currentX, yPos);
+  }
+  yPos += 3.5;
+  
+  // Remaining intro lines
+  if (introLines.length > 1) {
+    for (let i = 1; i < introLines.length; i++) {
+      pdf.text(introLines[i], margin, yPos);
+      yPos += 3.5;
+    }
+  }
+  yPos += 3;
 
   // Rent and Security Deposit
-  pdf.setFont('helvetica', 'normal');
-  pdf.text(`1. Rent: $${data.rent}`, margin + 5, yPos);
+  pdf.setFontSize(9);
+  pdf.text(`1. Rent: $${data.rent}`, margin + 3, yPos);
+  yPos += 4;
+  pdf.text(`2. Security Deposit: $${data.securityDeposit}`, margin + 3, yPos);
   yPos += 6;
-  pdf.text(`2. Security Deposit: $${data.securityDeposit}`, margin + 5, yPos);
-  yPos += 10;
 
   // The parties agree
-  pdf.setFont('helvetica', 'normal');
   pdf.text('The parties agree:', margin, yPos);
-  yPos += 8;
+  yPos += 5;
 
   const clauses = [
     `If the monthly electric bill exceeds $200, the amount over $200 will be divided equally among three occupants, with ${data.tenantName} responsible for his/her share of the excess charge.`,
@@ -114,35 +185,20 @@ export const generateAgreementPdf = async (
     `${data.tenantName} must reimburse ${data.sublessorName} for the following fee and expenses incurred by ${data.sublessorName.split(' ')[0]}: Any legal fees and disbursements for the preparation and service of legal notices; legal actions or proceedings brought by ${data.sublessorName} against ${data.tenantName} because of a default by ${data.tenantName} under this agreement; or for defending lawsuits brought against ${data.sublessorName} because of the actions of ${data.tenantName}, or any associates of ${data.tenantName}.`,
   ];
 
-  pdf.setFontSize(10);
+  pdf.setFontSize(8.5);
 
   // First 3 clauses
   for (let i = 0; i < clauses.length; i++) {
     const clauseText = `${i + 1}. ${clauses[i]}`;
-    const lines = pdf.splitTextToSize(clauseText, contentWidth - 5);
-    
-    // Check if we need a new page
-    if (yPos + lines.length * 4.5 > 250) {
-      pdf.addPage();
-      yPos = margin;
-    }
-    
-    pdf.text(lines, margin + 5, yPos);
-    yPos += lines.length * 4.5 + 2;
+    yPos = writeTextWithBoldNames(pdf, clauseText, margin + 3, yPos, contentWidth - 6, data.tenantName, data.sublessorName);
+    yPos += 0.5;
 
     // Add sub-clauses after clause 3
     if (i === 2) {
       for (let j = 0; j < subClauses.length; j++) {
         const subClauseText = `${String.fromCharCode(97 + j)}. ${subClauses[j]}`;
-        const subLines = pdf.splitTextToSize(subClauseText, contentWidth - 15);
-        
-        if (yPos + subLines.length * 4.5 > 250) {
-          pdf.addPage();
-          yPos = margin;
-        }
-        
-        pdf.text(subLines, margin + 15, yPos);
-        yPos += subLines.length * 4.5 + 2;
+        yPos = writeTextWithBoldNames(pdf, subClauseText, margin + 10, yPos, contentWidth - 14, data.tenantName, data.sublessorName);
+        yPos += 0.3;
       }
     }
   }
@@ -150,46 +206,40 @@ export const generateAgreementPdf = async (
   // Remaining clauses (4-11)
   for (let i = 0; i < remainingClauses.length; i++) {
     const clauseText = `${i + 4}. ${remainingClauses[i]}`;
-    const lines = pdf.splitTextToSize(clauseText, contentWidth - 5);
-    
-    if (yPos + lines.length * 4.5 > 250) {
-      pdf.addPage();
-      yPos = margin;
-    }
-    
-    pdf.text(lines, margin + 5, yPos);
-    yPos += lines.length * 4.5 + 2;
+    yPos = writeTextWithBoldNames(pdf, clauseText, margin + 3, yPos, contentWidth - 6, data.tenantName, data.sublessorName);
+    yPos += 0.5;
   }
 
   // Signature section
-  yPos += 10;
-  
-  if (yPos > 230) {
-    pdf.addPage();
-    yPos = margin;
-  }
+  yPos += 6;
 
-  pdf.setFontSize(11);
+  pdf.setFontSize(9);
   
   // Sublessor signature
-  pdf.text(`Sublessor: ${data.sublessorName}`, margin, yPos);
-  pdf.text('Date', pageWidth - margin - 40, yPos);
-  yPos += 10;
-  
   pdf.setFont('helvetica', 'normal');
+  pdf.text('Sublessor: ', margin, yPos);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(data.sublessorName, margin + pdf.getTextWidth('Sublessor: '), yPos);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text('Date', pageWidth - margin - 30, yPos);
+  yPos += 6;
+  
   pdf.text(`${data.sublessorName} ______________`, margin, yPos);
-  pdf.text(`________${formatShortDate(data.agreementDate)}___________`, pageWidth - margin - 60, yPos);
-  yPos += 15;
+  pdf.text(`________${formatShortDate(data.agreementDate)}___________`, pageWidth - margin - 50, yPos);
+  yPos += 10;
   
   // Sublessee signature
-  pdf.text(`Sublessee: ${data.tenantName}`, margin, yPos);
-  pdf.text('Date', pageWidth - margin - 40, yPos);
-  yPos += 10;
+  pdf.text('Sublessee: ', margin, yPos);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(data.tenantName, margin + pdf.getTextWidth('Sublessee: '), yPos);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text('Date', pageWidth - margin - 30, yPos);
+  yPos += 6;
   
   pdf.text('__________________________', margin, yPos);
-  pdf.text('________________________', pageWidth - margin - 60, yPos);
+  pdf.text('________________________', pageWidth - margin - 50, yPos);
 
   // Save the PDF
-  const fileName = `Agreement_${data.tenantName.replace(/\s+/g, '_')}${includeLetterhead ? '_Hive' : ''}.pdf`;
+  const fileName = `Sublease_Agreement_${data.tenantName.replace(/\s+/g, '_')}${includeLetterhead ? '_Hive' : ''}.pdf`;
   pdf.save(fileName);
 };
