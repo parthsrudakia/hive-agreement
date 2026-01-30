@@ -107,7 +107,7 @@ export const generateAgreementPdf = async (
   // Title
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(16);
-  pdf.text('Agreement', pageWidth / 2, yPos, { align: 'center' });
+  pdf.text('Sublease Agreement', pageWidth / 2, yPos, { align: 'center' });
   yPos += 9;
 
   // Introduction paragraph with bold names
