@@ -82,6 +82,11 @@ export const generateAgreementPdf = async (
   const margin = 20;
   const contentWidth = pageWidth - margin * 2;
   let yPos = 18;
+  
+  // Tighter spacing when letterhead is present
+  const hasLetterhead = includeLetterhead;
+  const clauseSpacing = hasLetterhead ? 1.8 : 2.5;
+  const sectionSpacing = hasLetterhead ? 5 : 8;
 
   // Add letterhead if requested
   if (includeLetterhead) {
@@ -95,20 +100,20 @@ export const generateAgreementPdf = async (
     const imgWidth = 145;
     const imgHeight = (img.height / img.width) * imgWidth;
     pdf.addImage(img, 'PNG', margin, yPos, imgWidth, imgHeight);
-    yPos += imgHeight + 3;
+    yPos += imgHeight + 2;
     
     // Yellow divider line
     pdf.setDrawColor(255, 204, 0);
     pdf.setLineWidth(0.7);
     pdf.line(margin, yPos, pageWidth - margin, yPos);
-    yPos += 7;
+    yPos += 5;
   }
 
   // Title
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(16);
   pdf.text('Sublease Agreement', pageWidth / 2, yPos, { align: 'center' });
-  yPos += 9;
+  yPos += hasLetterhead ? 7 : 9;
 
   // Introduction paragraph with bold names
   pdf.setFontSize(10);
@@ -151,22 +156,22 @@ export const generateAgreementPdf = async (
   // Rent and Security Deposit
   pdf.setFontSize(10);
   pdf.text(`1. Rent: $${data.rent}`, margin + 4, yPos);
-  yPos += 5;
+  yPos += hasLetterhead ? 4 : 5;
   
   // Pro Rate Rent (only if provided)
   let clauseNumber = 2;
   if (data.proRateRent && data.proRateRent.trim() !== '') {
     pdf.text(`${clauseNumber}. Prorated Rent: $${data.proRateRent}`, margin + 4, yPos);
-    yPos += 5;
+    yPos += hasLetterhead ? 4 : 5;
     clauseNumber++;
   }
   
   pdf.text(`${clauseNumber}. Security Deposit: $${data.securityDeposit}`, margin + 4, yPos);
-  yPos += 8;
+  yPos += sectionSpacing;
 
   // The parties agree
   pdf.text('The parties agree:', margin, yPos);
-  yPos += 7;
+  yPos += hasLetterhead ? 5 : 7;
 
   const startClauseNum = clauseNumber + 1;
   
@@ -197,14 +202,14 @@ export const generateAgreementPdf = async (
   for (let i = 0; i < clauses.length; i++) {
     const clauseText = `${startClauseNum + i}. ${clauses[i]}`;
     yPos = writeTextWithBoldNames(pdf, clauseText, margin + 4, yPos, contentWidth - 8, data.tenantName, data.sublessorName);
-    yPos += 2.5;
+    yPos += clauseSpacing;
 
     // Add sub-clauses after clause 3
     if (i === 2) {
       for (let j = 0; j < subClauses.length; j++) {
         const subClauseText = `${String.fromCharCode(97 + j)}. ${subClauses[j]}`;
         yPos = writeTextWithBoldNames(pdf, subClauseText, margin + 12, yPos, contentWidth - 16, data.tenantName, data.sublessorName);
-        yPos += 1.5;
+        yPos += hasLetterhead ? 1 : 1.5;
       }
     }
   }
@@ -213,11 +218,11 @@ export const generateAgreementPdf = async (
   for (let i = 0; i < remainingClauses.length; i++) {
     const clauseText = `${startClauseNum + 3 + i}. ${remainingClauses[i]}`;
     yPos = writeTextWithBoldNames(pdf, clauseText, margin + 4, yPos, contentWidth - 8, data.tenantName, data.sublessorName);
-    yPos += 2.5;
+    yPos += clauseSpacing;
   }
 
   // Signature section
-  yPos += 5;
+  yPos += hasLetterhead ? 3 : 5;
 
   pdf.setFontSize(10);
   
