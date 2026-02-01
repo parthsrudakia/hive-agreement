@@ -97,7 +97,7 @@ export const generateAgreementPdf = async (
       img.onload = resolve;
     });
     
-    const imgWidth = 90;
+    const imgWidth = 45;
     const imgHeight = (img.height / img.width) * imgWidth;
     pdf.addImage(img, 'PNG', margin, yPos, imgWidth, imgHeight);
     yPos += imgHeight + 1;
