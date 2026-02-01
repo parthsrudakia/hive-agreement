@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import hiveLetterhead from '@/assets/hive-letterhead.png';
+import hiveLogo from '@/assets/hive-logo.png';
 
 export interface AgreementData {
   tenantName: string;
@@ -91,7 +91,7 @@ export const generateAgreementPdf = async (
   // Add letterhead if requested
   if (includeLetterhead) {
     const img = new Image();
-    img.src = hiveLetterhead;
+    img.src = hiveLogo;
     
     await new Promise((resolve) => {
       img.onload = resolve;

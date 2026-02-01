@@ -1,16 +1,16 @@
 import AgreementForm from '@/components/AgreementForm';
-import hiveLetterhead from '@/assets/hive-letterhead.png';
+import hiveLogo from '@/assets/hive-logo.png';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 flex justify-center">
           <img 
-            src={hiveLetterhead} 
-            alt="Hive New York Living" 
-            className="w-full max-w-2xl h-auto object-contain"
+            src={hiveLogo} 
+            alt="Hive New York Living - Made Simple" 
+            className="h-20 md:h-24 w-auto object-contain"
           />
         </div>
       </header>
