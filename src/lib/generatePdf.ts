@@ -181,7 +181,7 @@ export const generateAgreementPdf = async (
   }
   
   pdf.text(`${clauseNumber}. Security Deposit: $${data.securityDeposit}`, margin + 4, yPos);
-  yPos += sectionSpacing;
+  yPos += sectionSpacing + (hasLetterhead ? 4 : 0);
 
   // The parties agree
   pdf.text('The parties agree:', margin, yPos);
