@@ -97,10 +97,10 @@ export const generateAgreementPdf = async (
       img.onload = resolve;
     });
     
-    const imgWidth = 145;
+    const imgWidth = 90;
     const imgHeight = (img.height / img.width) * imgWidth;
     pdf.addImage(img, 'PNG', margin, yPos, imgWidth, imgHeight);
-    yPos += imgHeight + 2;
+    yPos += imgHeight + 1;
     
     // Yellow divider line
     pdf.setDrawColor(255, 204, 0);
