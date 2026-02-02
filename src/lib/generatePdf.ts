@@ -190,8 +190,9 @@ export const generateAgreementPdf = async (
   yPos += sectionSpacing + (hasLetterhead ? 4 : 0);
 
   // The parties agree
+  yPos += 4; // spacing above
   pdf.text('The parties agree:', margin, yPos);
-  yPos += hasLetterhead ? 5 : 7;
+  yPos += hasLetterhead ? 9 : 11; // spacing after
 
   const startClauseNum = 1;
   
