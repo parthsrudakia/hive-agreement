@@ -196,7 +196,7 @@ export const generateAgreementPdf = async (
   const startClauseNum = 1;
   
   const clauses = [
-    `If the monthly electric bill exceeds $200, the amount over $200 will be divided equally among three occupants, with ${data.tenantName} responsible for his/her share of the excess charge.`,
+    `If the monthly electric bill exceeds $200, the amount over $200 will be divided equally among all the occupants of the apartment, ${data.tenantName} will be responsible for his/her share of the excess charge. i.e If the electrical bill is $250 and there are three occupants your portion will be $50/3= $16.67`,
     `Rent will be paid on the first of the month, if payment is not received by the 3rd of the month a $50 late fee will be applied.`,
     `Both ${data.sublessorName} and ${data.tenantName} will be required to give a 30-day notice period in the event parties want to terminate the agreement earlier.`,
   ];
