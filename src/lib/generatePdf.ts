@@ -125,16 +125,16 @@ export const generateAgreementPdf = async (
   }
 
   // Title
-  pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(14);
-  const titleText = 'SUBLEASE AGREEMENT';
-  pdf.text(titleText, pageWidth / 2, yPos, { align: 'center' });
-  // Underline
-  const titleWidth = pdf.getTextWidth(titleText);
-  pdf.setLineWidth(0.4);
-  pdf.setDrawColor(0, 0, 0);
-  pdf.line(pageWidth / 2 - titleWidth / 2, yPos + 1, pageWidth / 2 + titleWidth / 2, yPos + 1);
-  yPos += hasLetterhead ? 8 : 10;
+  // pdf.setFont('helvetica', 'bold');
+  // pdf.setFontSize(14);
+  // const titleText = 'SUBLEASE AGREEMENT';
+  // pdf.text(titleText, pageWidth / 2, yPos, { align: 'center' });
+  // // Underline
+  // const titleWidth = pdf.getTextWidth(titleText);
+  // pdf.setLineWidth(0.4);
+  // pdf.setDrawColor(0, 0, 0);
+  // pdf.line(pageWidth / 2 - titleWidth / 2, yPos + 1, pageWidth / 2 + titleWidth / 2, yPos + 1);
+  // yPos += hasLetterhead ? 8 : 10;
 
   // Introduction paragraph with bold names and address
   pdf.setFontSize(10);
