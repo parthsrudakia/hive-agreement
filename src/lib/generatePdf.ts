@@ -40,7 +40,7 @@ const writeTextWithBoldNames = (
   maxWidth: number,
   tenantName: string,
   sublessorName: string,
-  fontSize: number = 10
+  fontSize: number = 9
 ): number => {
   pdf.setFontSize(fontSize);
   const lines = pdf.splitTextToSize(text, maxWidth);
@@ -102,7 +102,7 @@ export const generateAgreementPdf = async (
     pdf.addImage(img, 'PNG', margin, yPos, imgWidth, imgHeight);
     
     // Contact details on top right
-    pdf.setFontSize(9);
+    pdf.setFontSize(7);
     pdf.setFont('helvetica', 'normal');
     const rightX = pageWidth - margin;
     let contactY = yPos + 6;
@@ -174,7 +174,7 @@ export const generateAgreementPdf = async (
   yPos += 4;
 
   // Rent and Security Deposit
-  pdf.setFontSize(10);
+  pdf.setFontSize(9);
   pdf.text(`1. Rent: $${data.rent}`, margin + 4, yPos);
   yPos += hasLetterhead ? 4 : 5;
   
@@ -244,7 +244,7 @@ export const generateAgreementPdf = async (
   // Signature section
   yPos += hasLetterhead ? 3 : 5;
 
-  pdf.setFontSize(10);
+  pdf.setFontSize(9);
   
   // Sublessor signature
   pdf.setFont('helvetica', 'normal');
