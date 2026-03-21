@@ -58,8 +58,9 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
         hive: {
-          yellow: "hsl(var(--hive-yellow))",
-          black: "hsl(var(--hive-black))",
+          gold: "hsl(var(--hive-gold))",
+          dark: "hsl(var(--hive-dark))",
+          warm: "hsl(var(--hive-warm))",
         },
       },
       borderRadius: {
@@ -69,6 +70,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Playfair Display', 'Georgia', 'serif'],
       },
       keyframes: {
         "accordion-down": {

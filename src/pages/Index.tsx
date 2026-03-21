@@ -1,27 +1,44 @@
 import AgreementForm from '@/components/AgreementForm';
-import hiveLogo from '@/assets/hive-logo.png';
+import hiveLogo from '@/assets/hive-logo-new.png';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+      <header className="border-b border-border/50 sticky top-0 z-10 bg-background/80 backdrop-blur-md">
         <div className="container mx-auto px-4 py-4 flex justify-center">
           <img 
             src={hiveLogo} 
-            alt="Hive New York Living - Made Simple" 
-            className="h-20 md:h-24 w-auto object-contain"
+            alt="Hive - City Living, Made Simple" 
+            className="h-12 md:h-14 w-auto object-contain"
           />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 md:py-12">
-        <div className="max-w-2xl mx-auto space-y-6">
+      <main className="container mx-auto px-4 py-10 md:py-16">
+        <div className="max-w-2xl mx-auto space-y-8">
+          {/* Title Section */}
+          <div className="text-center space-y-3">
+            <h1 className="text-3xl md:text-4xl font-serif tracking-tight">
+              Rent Agreement <span className="italic text-gradient-gold">Generator</span>
+            </h1>
+            <p className="text-muted-foreground text-sm md:text-base max-w-md mx-auto">
+              Fill in the details below to generate a professional rental agreement PDF.
+            </p>
+          </div>
+
           {/* Form */}
           <AgreementForm />
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-border/50 py-6 text-center">
+        <p className="text-xs text-muted-foreground tracking-widest uppercase">
+          Hive &middot; City Living, Made Simple
+        </p>
+      </footer>
     </div>
   );
 };
