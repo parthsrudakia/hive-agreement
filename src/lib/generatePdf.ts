@@ -40,7 +40,7 @@ const writeTextWithBoldNames = (
   maxWidth: number,
   tenantName: string,
   sublessorName: string,
-  fontSize: number = 9
+  fontSize: number = 10
 ): number => {
   pdf.setFontSize(fontSize);
   const lines = pdf.splitTextToSize(text, maxWidth);
@@ -102,7 +102,7 @@ export const generateAgreementPdf = async (
     pdf.addImage(img, 'PNG', margin, yPos, imgWidth, imgHeight);
     
     // Contact details on top right
-    pdf.setFontSize(7);
+    pdf.setFontSize(9);
     pdf.setFont('helvetica', 'normal');
     const rightX = pageWidth - margin;
     let contactY = yPos + 6;
@@ -125,16 +125,16 @@ export const generateAgreementPdf = async (
   }
 
   // Title
-  // pdf.setFont('helvetica', 'bold');
-  // pdf.setFontSize(14);
-  // const titleText = 'SUBLEASE AGREEMENT';
-  // pdf.text(titleText, pageWidth / 2, yPos, { align: 'center' });
-  // // Underline
-  // const titleWidth = pdf.getTextWidth(titleText);
-  // pdf.setLineWidth(0.4);
-  // pdf.setDrawColor(0, 0, 0);
-  // pdf.line(pageWidth / 2 - titleWidth / 2, yPos + 1, pageWidth / 2 + titleWidth / 2, yPos + 1);
-  // yPos += hasLetterhead ? 8 : 10;
+  pdf.setFont('helvetica', 'bold');
+  pdf.setFontSize(14);
+  const titleText = 'SUBLEASE AGREEMENT';
+  pdf.text(titleText, pageWidth / 2, yPos, { align: 'center' });
+  // Underline
+  const titleWidth = pdf.getTextWidth(titleText);
+  pdf.setLineWidth(0.4);
+  pdf.setDrawColor(0, 0, 0);
+  pdf.line(pageWidth / 2 - titleWidth / 2, yPos + 1, pageWidth / 2 + titleWidth / 2, yPos + 1);
+  yPos += hasLetterhead ? 8 : 10;
 
   // Introduction paragraph with bold names and address
   pdf.setFontSize(10);
@@ -174,7 +174,7 @@ export const generateAgreementPdf = async (
   yPos += 4;
 
   // Rent and Security Deposit
-  pdf.setFontSize(9);
+  pdf.setFontSize(10);
   pdf.text(`1. Rent: $${data.rent}`, margin + 4, yPos);
   yPos += hasLetterhead ? 4 : 5;
   
@@ -196,7 +196,7 @@ export const generateAgreementPdf = async (
   const startClauseNum = 1;
   
   const clauses = [
-    `If the monthly electric bill exceeds $200, the amount over $200 will be divided equally among all the occupants of the apartment, ${data.tenantName} will be responsible for his/her share of the excess charge. i.e If the electrical bill is $250 and there are three occupants your portion will be $50/3= $16.67`,
+    `If the monthly electric bill exceeds $200, the amount over $200 will be divided equally among three occupants, with ${data.tenantName} responsible for his/her share of the excess charge.`,
     `Rent will be paid on the first of the month, if payment is not received by the 3rd of the month a $50 late fee will be applied.`,
     `Both ${data.sublessorName} and ${data.tenantName} will be required to give a 30-day notice period in the event parties want to terminate the agreement earlier.`,
   ];
@@ -209,10 +209,10 @@ export const generateAgreementPdf = async (
 
   const remainingClauses = [
     `Security deposit will be returned within 14 days of moving out.`,
-    `Smoking is strictly prohibited in the apartment and throughout the building. If smoking is detected or observed within the apartment, a $1,000 fine will be assessed.`,
+    `Smoking is strictly prohibited within the apartment and building. If you are found smoking in the apartment, a $1,000 fine will be issued.`,
     `${data.tenantName} agrees to adhere to cleanliness standards or additional incurred charges for maid services will be required.`,
     `${data.tenantName} shall pay for all property damage he/she is responsible for in the event something happens during sublease.`,
-    `A move-out cleaning fee of $100 will be applied, along with an additional $20 for replacement of the mattress protector cover.`,
+    `A move out cleaning fee of $100 will be applied.`,
     `A joint inspection of the premises shall be conducted by ${data.sublessorName} and ${data.tenantName} recording any damage or deficiencies that exist as the start of the sublease period.`,
     `${data.tenantName} shall be liable for the cost of any cleaning or repair to correct damages caused by ${data.tenantName} at the end of the period if not recorded at the start of the agreement, normal wear and tears excepted. Security deposit will be refunded after vacating the apartment given there is no damage (except normal wear and tear) found prior to vacating.`,
     `${data.tenantName} must reimburse ${data.sublessorName} for the following fee and expenses incurred by ${data.sublessorName.split(' ')[0]}: Any legal fees and disbursements for the preparation and service of legal notices; legal actions or proceedings brought by ${data.sublessorName} against ${data.tenantName} because of a default by ${data.tenantName} under this agreement; or for defending lawsuits brought against ${data.sublessorName} because of the actions of ${data.tenantName}, or any associates of ${data.tenantName}.`,
@@ -244,7 +244,7 @@ export const generateAgreementPdf = async (
   // Signature section
   yPos += hasLetterhead ? 3 : 5;
 
-  pdf.setFontSize(9);
+  pdf.setFontSize(10);
   
   // Sublessor signature
   pdf.setFont('helvetica', 'normal');

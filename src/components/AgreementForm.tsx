@@ -109,34 +109,17 @@ const AgreementForm = () => {
             className="h-11 bg-secondary/50 border-border focus:border-primary"
           />
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Tenant & Sublessor Names */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="tenantName" className="text-sm font-medium">
-              Tenant Name (Sublessee)
-            </Label>
-            <Input
-              id="tenantName"
-              placeholder="e.g., Lex Luthor"
-              value={formData.tenantName}
-              onChange={(e) => handleInputChange('tenantName', e.target.value)}
-              className="h-11"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="sublessorName" className="text-sm font-medium">
-              Sublessor Name
-            </Label>
-            <Input
-              id="sublessorName"
-              placeholder="e.g., Vineet Dutta"
-              value={formData.sublessorName}
-              onChange={(e) => handleInputChange('sublessorName', e.target.value)}
-              className="h-11"
-            />
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="sublessorName" className="text-xs uppercase tracking-wider text-muted-foreground">
+            Sublessor Name
+          </Label>
+          <Input
+            id="sublessorName"
+            placeholder="e.g., Vineet Dutta"
+            value={formData.sublessorName}
+            onChange={(e) => handleInputChange('sublessorName', e.target.value)}
+            className="h-11 bg-secondary/50 border-border focus:border-primary"
+          />
         </div>
       </div>
 
