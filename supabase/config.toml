@@ -1,1 +1,4 @@
 project_id = "zjcmgbhxfewkbyocxodi"
+
+[functions.generate-agreement]
+verify_jwt = false

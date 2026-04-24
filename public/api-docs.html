@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hive Agreement API Documentation</title>
+<meta name="description" content="Public API to generate Hive sublease agreement PDFs programmatically." />
+<style>
+  :root {
+    --bg: #f5f5f3;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --gold: #c9a44a;
+    --card: #ffffff;
+    --border: #e5e3df;
+    --code-bg: #1a1a1a;
+    --code-fg: #f5f5f3;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    margin: 0;
+    line-height: 1.6;
+  }
+  .container { max-width: 860px; margin: 0 auto; padding: 48px 24px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px; }
+  h1 { font-family: "Playfair Display", Georgia, serif; font-size: 2.25rem; margin: 0 0 8px; }
+  h1 em { color: var(--gold); font-style: italic; }
+  h2 { font-family: "Playfair Display", Georgia, serif; font-size: 1.5rem; margin-top: 40px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 24px; }
+  p { color: #2a2a2a; }
+  code { font-family: "SF Mono", Monaco, Consolas, monospace; font-size: 0.9em; background: #ececea; padding: 2px 6px; border-radius: 4px; }
+  pre { background: var(--code-bg); color: var(--code-fg); padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+  pre code { background: transparent; padding: 0; color: inherit; }
+  .endpoint { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 16px 20px; border-radius: 6px; margin: 16px 0; font-family: "SF Mono", Monaco, monospace; }
+  .method { display: inline-block; background: var(--gold); color: #1a1a1a; padding: 2px 10px; border-radius: 4px; font-weight: 700; font-size: 0.85rem; margin-right: 10px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; background: var(--card); border-radius: 6px; overflow: hidden; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 0.92rem; vertical-align: top; }
+  th { background: #efeeea; font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .badge { display: inline-block; background: #efeeea; padding: 1px 8px; border-radius: 4px; font-size: 0.75rem; color: var(--muted); }
+  .badge-required { background: #fdecec; color: #b3261e; }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; text-align: center; text-transform: uppercase; letter-spacing: 0.15em; }
+  a { color: var(--gold); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .note { background: #fff8e1; border-left: 3px solid var(--gold); padding: 12px 16px; border-radius: 4px; font-size: 0.92rem; margin: 16px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Hive Agreement <em>API</em></h1>
+    <p>Generate Hive sublease agreement PDFs programmatically. Public endpoint — no authentication required.</p>
+    <p><a href="/">&larr; Back to web interface</a></p>
+  </header>
+
+  <h2>Endpoint</h2>
+  <div class="endpoint">
+    <span class="method">POST</span>
+    https://zjcmgbhxfewkbyocxodi.supabase.co/functions/v1/generate-agreement
+  </div>
+  <p>A <code>GET</code> on the same URL returns a JSON description of the API.</p>
+
+  <h2>Rate Limit</h2>
+  <p><strong>10 requests per minute per IP address.</strong> Requests beyond the limit return HTTP <code>429 Too Many Requests</code> with a <code>Retry-After</code> header indicating seconds to wait.</p>
+  <div class="note">Note: Rate limiting is in-memory per server instance, so the limit is approximate under heavy distributed load.</div>
+
+  <h2>Request Body</h2>
+  <p>Send <code>Content-Type: application/json</code>.</p>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>tenantName</code> <span class="badge badge-required">required</span></td><td>string</td><td>Full name of the sublessee/tenant.</td></tr>
+      <tr><td><code>sublessorName</code> <span class="badge badge-required">required</span></td><td>string</td><td>Full name of the sublessor.</td></tr>
+      <tr><td><code>propertyAddress</code> <span class="badge badge-required">required</span></td><td>string</td><td>Full street address of the property.</td></tr>
+      <tr><td><code>rent</code> <span class="badge badge-required">required</span></td><td>string</td><td>Monthly rent amount, e.g. <code>"1650"</code>.</td></tr>
+      <tr><td><code>proRateRent</code> <span class="badge">optional</span></td><td>string</td><td>Prorated first-month rent, if applicable.</td></tr>
+      <tr><td><code>securityDeposit</code> <span class="badge badge-required">required</span></td><td>string</td><td>Security deposit amount.</td></tr>
+      <tr><td><code>leaseStartDate</code> <span class="badge badge-required">required</span></td><td>string</td><td>ISO date, e.g. <code>"2025-05-01"</code>.</td></tr>
+      <tr><td><code>leaseEndDate</code> <span class="badge badge-required">required</span></td><td>string</td><td>ISO date.</td></tr>
+      <tr><td><code>agreementDate</code> <span class="badge badge-required">required</span></td><td>string</td><td>ISO date the agreement is signed.</td></tr>
+      <tr><td><code>includeLetterhead</code> <span class="badge">optional</span></td><td>boolean</td><td>Default <code>true</code>. Whether to add the Hive letterhead.</td></tr>
+      <tr><td><code>format</code> <span class="badge">optional</span></td><td>string</td><td><code>"pdf"</code> (default, returns binary PDF) or <code>"base64"</code> (returns JSON with base64-encoded PDF).</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Responses</h2>
+  <h3>Success — format = "pdf" (default)</h3>
+  <p>Returns the PDF binary with <code>Content-Type: application/pdf</code> and <code>Content-Disposition: attachment</code>.</p>
+
+  <h3>Success — format = "base64"</h3>
+<pre><code>{
+  "filename": "Praveen Kumar Anwla Sublease Agreement.pdf",
+  "mimeType": "application/pdf",
+  "base64": "JVBERi0xLjMKJb..."
+}</code></pre>
+
+  <h3>Error responses</h3>
+  <table>
+    <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>400</code></td><td>Invalid JSON or validation error (see <code>details</code> field)</td></tr>
+      <tr><td><code>405</code></td><td>Method not allowed (use POST)</td></tr>
+      <tr><td><code>429</code></td><td>Rate limit exceeded</td></tr>
+      <tr><td><code>500</code></td><td>PDF generation failed</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Examples</h2>
+
+  <h3>cURL — download PDF</h3>
+<pre><code>curl -X POST https://zjcmgbhxfewkbyocxodi.supabase.co/functions/v1/generate-agreement \
+  -H "Content-Type: application/json" \
+  -o agreement.pdf \
+  -d '{
+    "tenantName": "Praveen Kumar Anwla",
+    "sublessorName": "Vineet Dutta",
+    "propertyAddress": "161 Van Wagenen Ave, Jersey City, NJ 07306",
+    "rent": "1650",
+    "securityDeposit": "1650",
+    "leaseStartDate": "2025-05-01",
+    "leaseEndDate": "2026-04-30",
+    "agreementDate": "2025-04-25",
+    "includeLetterhead": true
+  }'</code></pre>
+
+  <h3>JavaScript — fetch and download</h3>
+<pre><code>const res = await fetch(
+  "https://zjcmgbhxfewkbyocxodi.supabase.co/functions/v1/generate-agreement",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      tenantName: "Praveen Kumar Anwla",
+      sublessorName: "Vineet Dutta",
+      propertyAddress: "161 Van Wagenen Ave, Jersey City, NJ 07306",
+      rent: "1650",
+      securityDeposit: "1650",
+      leaseStartDate: "2025-05-01",
+      leaseEndDate: "2026-04-30",
+      agreementDate: "2025-04-25"
+    })
+  }
+);
+const blob = await res.blob();
+const url = URL.createObjectURL(blob);
+window.open(url);</code></pre>
+
+  <h3>Python</h3>
+<pre><code>import requests
+
+r = requests.post(
+    "https://zjcmgbhxfewkbyocxodi.supabase.co/functions/v1/generate-agreement",
+    json={
+        "tenantName": "Praveen Kumar Anwla",
+        "sublessorName": "Vineet Dutta",
+        "propertyAddress": "161 Van Wagenen Ave, Jersey City, NJ 07306",
+        "rent": "1650",
+        "securityDeposit": "1650",
+        "leaseStartDate": "2025-05-01",
+        "leaseEndDate": "2026-04-30",
+        "agreementDate": "2025-04-25",
+    },
+)
+with open("agreement.pdf", "wb") as f:
+    f.write(r.content)</code></pre>
+
+  <footer>
+    Hive &middot; City Living, Made Simple
+  </footer>
+</div>
+</body>
+</html>

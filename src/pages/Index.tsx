@@ -34,9 +34,19 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-6 text-center">
+      <footer className="border-t border-border/50 py-6 text-center space-y-2">
         <p className="text-xs text-muted-foreground tracking-widest uppercase">
           Hive &middot; City Living, Made Simple
+        </p>
+        <p className="text-xs">
+          <a
+            href="/api-docs.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-primary underline underline-offset-4 tracking-wider uppercase"
+          >
+            API Documentation
+          </a>
         </p>
       </footer>
     </div>
