@@ -1,6 +1,11 @@
-import { corsHeaders } from "@supabase/supabase-js/cors";
 import { jsPDF } from "npm:jspdf@2.5.1";
 import { z } from "npm:zod@3.23.8";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+};
 
 // ---- Rate limiting (in-memory, per instance) ----
 const RATE_LIMIT = 10; // requests
