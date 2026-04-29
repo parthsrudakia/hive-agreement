@@ -40,6 +40,19 @@ const loadImage = (src: string): Promise<HTMLImageElement> => {
   });
 };
 
+const downloadPdf = (pdf: jsPDF, fileName: string) => {
+  const blob = pdf.output('blob');
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
 // Helper to write text with bold names inline
 const writeTextWithBoldNames = (
   pdf: jsPDF,
@@ -264,5 +277,5 @@ export const generateAgreementPdf = async (
 
   // Save the PDF
   const fileName = `${data.tenantName} Sublease Agreement.pdf`;
-  pdf.save(fileName);
+  downloadPdf(pdf, fileName);
 };
