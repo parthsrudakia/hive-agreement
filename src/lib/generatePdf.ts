@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import hiveLogo from '@/assets/hive-logo.png';
+import hiveLogo from '@/assets/hive-logo-new.png';
 
 export interface AgreementData {
   tenantName: string;
@@ -123,18 +123,6 @@ export const generateAgreementPdf = async (
     pdf.line(margin, yPos, pageWidth - margin, yPos);
     yPos += 5;
   }
-
-  // Title
-  pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(14);
-  const titleText = 'SUBLEASE AGREEMENT';
-  pdf.text(titleText, pageWidth / 2, yPos, { align: 'center' });
-  // Underline
-  const titleWidth = pdf.getTextWidth(titleText);
-  pdf.setLineWidth(0.4);
-  pdf.setDrawColor(0, 0, 0);
-  pdf.line(pageWidth / 2 - titleWidth / 2, yPos + 1, pageWidth / 2 + titleWidth / 2, yPos + 1);
-  yPos += hasLetterhead ? 8 : 10;
 
   // Introduction paragraph with bold names and address
   pdf.setFontSize(10);
