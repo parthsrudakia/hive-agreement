@@ -47,10 +47,23 @@ const downloadPdf = (pdf: jsPDF, fileName: string) => {
 
   link.href = url;
   link.download = fileName;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.style.display = 'none';
   document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+
+  link.dispatchEvent(
+    new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    })
+  );
+
+  window.setTimeout(() => {
+    link.remove();
+    URL.revokeObjectURL(url);
+  }, 1000);
 };
 
 // Helper to write text with bold names inline
