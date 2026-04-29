@@ -101,8 +101,8 @@ function buildPdf(data: AgreementData): Uint8Array {
   const sectionSpacing = hasLetterhead ? 5 : 8;
 
   if (hasLetterhead) {
-    const logoWidth = 55;
-    const logoHeight = 24;
+    const logoWidth = 48;
+    const logoHeight = 21;
     pdf.addImage(HIVE_LOGO_DATA_URL, "PNG", margin, yPos, logoWidth, logoHeight);
 
     pdf.setFont("helvetica", "normal");
