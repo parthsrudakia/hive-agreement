@@ -31,6 +31,28 @@ const formatShortDate = (dateStr: string): string => {
   });
 };
 
+const loadImage = (src: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Unable to load letterhead logo'));
+    img.src = src;
+  });
+};
+
+const downloadPdf = (pdf: jsPDF, fileName: string) => {
+  const blob = pdf.output('blob');
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+};
+
 // Helper to write text with bold names inline
 const writeTextWithBoldNames = (
   pdf: jsPDF,
@@ -90,12 +112,7 @@ export const generateAgreementPdf = async (
 
   // Add letterhead if requested
   if (includeLetterhead) {
-    const img = new Image();
-    img.src = hiveLogo;
-    
-    await new Promise((resolve) => {
-      img.onload = resolve;
-    });
+    const img = await loadImage(hiveLogo);
     
     const imgWidth = 48;
     const imgHeight = (img.height / img.width) * imgWidth;
@@ -260,5 +277,5 @@ export const generateAgreementPdf = async (
 
   // Save the PDF
   const fileName = `${data.tenantName} Sublease Agreement.pdf`;
-  pdf.save(fileName);
+  downloadPdf(pdf, fileName);
 };
