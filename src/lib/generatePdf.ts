@@ -13,6 +13,11 @@ export interface AgreementData {
   agreementDate: string;
 }
 
+export interface GeneratedPdfDownload {
+  fileName: string;
+  url: string;
+}
+
 const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr);
   return date.toLocaleDateString('en-US', { 
@@ -40,17 +45,31 @@ const loadImage = (src: string): Promise<HTMLImageElement> => {
   });
 };
 
-const downloadPdf = (pdf: jsPDF, fileName: string) => {
+const createPdfDownload = (pdf: jsPDF, fileName: string): GeneratedPdfDownload => {
   const blob = pdf.output('blob');
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
 
   link.href = url;
   link.download = fileName;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.style.display = 'none';
   document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+
+  link.dispatchEvent(
+    new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    })
+  );
+
+  window.setTimeout(() => {
+    link.remove();
+  }, 1000);
+
+  return { fileName, url };
 };
 
 // Helper to write text with bold names inline
@@ -98,7 +117,7 @@ const writeTextWithBoldNames = (
 export const generateAgreementPdf = async (
   data: AgreementData,
   includeLetterhead: boolean
-): Promise<void> => {
+): Promise<GeneratedPdfDownload> => {
   const pdf = new jsPDF('p', 'mm', 'letter');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const margin = 20;
@@ -277,5 +296,5 @@ export const generateAgreementPdf = async (
 
   // Save the PDF
   const fileName = `${data.tenantName} Sublease Agreement.pdf`;
-  downloadPdf(pdf, fileName);
+  return createPdfDownload(pdf, fileName);
 };
