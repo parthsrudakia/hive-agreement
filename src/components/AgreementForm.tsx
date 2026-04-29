@@ -11,12 +11,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { generateAgreementPdf, AgreementData } from '@/lib/generatePdf';
+import { generateAgreementPdf, AgreementData, GeneratedPdfDownload } from '@/lib/generatePdf';
 import { useToast } from '@/hooks/use-toast';
 
 const AgreementForm = () => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [latestDownload, setLatestDownload] = useState<GeneratedPdfDownload | null>(null);
   
   const [formData, setFormData] = useState({
     tenantName: '',
@@ -76,11 +77,16 @@ const AgreementForm = () => {
         agreementDate: formData.agreementDate!.toISOString(),
       };
 
-      await generateAgreementPdf(agreementData, includeLetterhead);
+      if (latestDownload) {
+        URL.revokeObjectURL(latestDownload.url);
+      }
+
+      const download = await generateAgreementPdf(agreementData, includeLetterhead);
+      setLatestDownload(download);
 
       toast({
         title: 'PDF Generated!',
-        description: `Agreement for ${formData.tenantName} has been downloaded.`,
+        description: 'If the download did not start, use the download link below.',
       });
     } catch (error) {
       toast({
@@ -303,6 +309,17 @@ const AgreementForm = () => {
         <p className="text-xs text-muted-foreground text-center">
           PDFs will be automatically downloaded to your device
         </p>
+        {latestDownload && (
+          <a
+            href={latestDownload.url}
+            download={latestDownload.fileName}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block text-center text-sm font-semibold text-primary underline underline-offset-4"
+          >
+            Download latest PDF
+          </a>
+        )}
       </div>
     </div>
   );
