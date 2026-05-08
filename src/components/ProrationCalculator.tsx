@@ -20,9 +20,10 @@ interface ProrationCalculatorProps {
 const ProrationCalculator = ({ monthlyRent, moveInDate, onApply }: ProrationCalculatorProps) => {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(moveInDate);
+  const [rentInput, setRentInput] = useState<string>(monthlyRent);
 
   const effectiveDate = selectedDate ?? moveInDate;
-  const rentNum = parseFloat(monthlyRent);
+  const rentNum = parseFloat(rentInput);
 
   const result = useMemo(() => {
     if (!effectiveDate || !rentNum || isNaN(rentNum) || rentNum <= 0) return null;
@@ -47,7 +48,13 @@ const ProrationCalculator = ({ monthlyRent, moveInDate, onApply }: ProrationCalc
   };
 
   return (
-    <Popover open={open} onOpenChange={(o) => { setOpen(o); if (o) setSelectedDate(moveInDate); }}>
+    <Popover open={open} onOpenChange={(o) => {
+      setOpen(o);
+      if (o) {
+        setSelectedDate(moveInDate);
+        setRentInput(monthlyRent);
+      }
+    }}>
       <PopoverTrigger asChild>
         <button
           type="button"
@@ -66,10 +73,15 @@ const ProrationCalculator = ({ monthlyRent, moveInDate, onApply }: ProrationCalc
         </div>
 
         <div className="space-y-2">
-          <Label className="text-xs uppercase tracking-wider text-muted-foreground">Monthly Rent</Label>
-          <div className="text-sm font-medium">
-            {rentNum > 0 ? `$${rentNum.toLocaleString()}` : <span className="text-muted-foreground">Enter rent above</span>}
-          </div>
+          <Label htmlFor="calc-rent" className="text-xs uppercase tracking-wider text-muted-foreground">Monthly Rent ($)</Label>
+          <Input
+            id="calc-rent"
+            type="number"
+            placeholder="e.g., 1650"
+            value={rentInput}
+            onChange={(e) => setRentInput(e.target.value)}
+            className="h-10 bg-secondary/50"
+          />
         </div>
 
         <div className="space-y-2">
