@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 interface ProrationCalculatorProps {
   monthlyRent: string;
