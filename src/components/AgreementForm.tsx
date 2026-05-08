@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { generateAgreementPdf, AgreementData, GeneratedPdfDownload } from '@/lib/generatePdf';
+import ProrationCalculator from '@/components/ProrationCalculator';
 import { useToast } from '@/hooks/use-toast';
 
 const AgreementForm = () => {
